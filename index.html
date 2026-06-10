@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Slider Studio Pro</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="loader"><h2>Loading Slider Studio...</h2></div>
+
+<div class="app">
+  <div class="control-panel">
+    <h2>SliderStudio Pro</h2>
+    <button id="playPauseBtn">Pause Autoplay</button>
+    <input type="range" id="intervalSlider" min="1000" max="10000" value="3000">
+    <input type="text" id="slideTitle" placeholder="Title">
+    <textarea id="slideDesc" placeholder="Description"></textarea>
+    <button id="updateSlide">Update Slide</button>
+  </div>
+
+  <div class="slider-area">
+    <div class="slider">
+      <div class="slide-counter"><span id="counter">1 / 3</span></div>
+
+      <div class="slide active">
+        <img src="https://picsum.photos/1200/700?1">
+        <div class="content"><h1>Slide One</h1><p>Description One</p></div>
+      </div>
+
+      <div class="slide">
+        <img src="https://picsum.photos/1200/700?2">
+        <div class="content"><h1>Slide Two</h1><p>Description Two</p></div>
+      </div>
+
+      <div class="slide">
+        <img src="https://picsum.photos/1200/700?3">
+        <div class="content"><h1>Slide Three</h1><p>Description Three</p></div>
+      </div>
+    </div>
+
+    <button class="prev">❮</button>
+    <button class="next">❯</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
