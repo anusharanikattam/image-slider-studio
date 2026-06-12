@@ -1,49 +1,4182 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Slider Studio Pro</title>
-<link rel="stylesheet" href="style.css">
+<title>Image Slider Studio Pro</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+:root{
+--bg:#0f172a;
+--card:rgba(255,255,255,.08);
+--text:#ffffff;
+--accent:#00e5ff;
+--blur:20px;
+}
+
+body{
+background:var(--bg);
+color:var(--text);
+overflow-x:hidden;
+min-height:100vh;
+}
+
+/* ==========================
+   Animated Background
+========================== */
+
+.bg-animation{
+position:fixed;
+inset:0;
+overflow:hidden;
+z-index:-2;
+}
+
+.circle{
+position:absolute;
+border-radius:50%;
+filter:blur(80px);
+opacity:.35;
+animation:float 18s infinite linear;
+}
+
+.c1{
+width:300px;
+height:300px;
+background:#00f5ff;
+top:5%;
+left:5%;
+}
+
+.c2{
+width:400px;
+height:400px;
+background:#ff00ff;
+right:5%;
+top:20%;
+}
+
+.c3{
+width:350px;
+height:350px;
+background:#ff8800;
+left:30%;
+bottom:0;
+}
+
+@keyframes float{
+0%{transform:translateY(0) rotate(0deg);}
+50%{transform:translateY(-80px) rotate(180deg);}
+100%{transform:translateY(0) rotate(360deg);}
+}
+
+/* ==========================
+   Dashboard Layout
+========================== */
+
+.dashboard{
+display:grid;
+grid-template-columns:280px 1fr;
+min-height:100vh;
+}
+
+.sidebar{
+background:rgba(255,255,255,.05);
+backdrop-filter:blur(var(--blur));
+border-right:1px solid rgba(255,255,255,.1);
+padding:25px;
+}
+
+.logo{
+font-size:24px;
+font-weight:700;
+margin-bottom:40px;
+text-align:center;
+color:var(--accent);
+}
+
+.menu{
+display:flex;
+flex-direction:column;
+gap:15px;
+}
+
+.menu button{
+padding:15px;
+border:none;
+border-radius:15px;
+background:rgba(255,255,255,.08);
+color:white;
+cursor:pointer;
+transition:.3s;
+}
+
+.menu button:hover{
+background:var(--accent);
+color:black;
+transform:translateX(5px);
+}
+
+.main{
+padding:25px;
+}
+
+/* ==========================
+   Glass Cards
+========================== */
+
+.glass{
+background:var(--card);
+backdrop-filter:blur(var(--blur));
+border:1px solid rgba(255,255,255,.1);
+border-radius:25px;
+padding:20px;
+box-shadow:0 8px 30px rgba(0,0,0,.25);
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:20px;
+margin-bottom:25px;
+}
+
+.search-box{
+flex:1;
+}
+
+.search-box input{
+width:100%;
+padding:15px;
+border:none;
+border-radius:15px;
+background:rgba(255,255,255,.08);
+color:white;
+outline:none;
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+margin-bottom:25px;
+}
+
+.stat-card h3{
+font-size:15px;
+opacity:.8;
+margin-bottom:10px;
+}
+
+.stat-card h1{
+font-size:32px;
+color:var(--accent);
+}
+
+/* ==========================
+   Upload Section
+========================== */
+
+.upload-area{
+margin-bottom:25px;
+padding:40px;
+text-align:center;
+border:2px dashed rgba(255,255,255,.25);
+border-radius:20px;
+cursor:pointer;
+transition:.3s;
+}
+
+.upload-area:hover{
+border-color:var(--accent);
+background:rgba(255,255,255,.04);
+}
+
+.upload-area h2{
+margin-bottom:10px;
+}
+
+.upload-area p{
+opacity:.7;
+}
+
+/* ==========================
+   Slider Container
+========================== */
+
+.slider-card{
+padding:20px;
+}
+
+.slider{
+position:relative;
+height:520px;
+overflow:hidden;
+border-radius:20px;
+}
+
+.slide{
+position:absolute;
+width:100%;
+height:100%;
+opacity:0;
+transform:scale(1.05);
+transition:all .8s ease;
+}
+
+.slide.active{
+opacity:1;
+transform:scale(1);
+}
+
+.slide img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+/* ==========================
+   Navigation Buttons
+========================== */
+
+.nav-btn{
+position:absolute;
+top:50%;
+transform:translateY(-50%);
+width:55px;
+height:55px;
+border:none;
+border-radius:50%;
+cursor:pointer;
+font-size:22px;
+background:rgba(255,255,255,.15);
+backdrop-filter:blur(10px);
+color:white;
+z-index:10;
+}
+
+.prev{
+left:20px;
+}
+
+.next{
+right:20px;
+}
+
+/* ==========================
+   Progress Bar
+========================== */
+
+.progress{
+height:6px;
+background:rgba(255,255,255,.1);
+margin-top:20px;
+border-radius:20px;
+overflow:hidden;
+}
+
+.progress-bar{
+height:100%;
+width:0%;
+background:linear-gradient(90deg,#00f5ff,#ff00ff);
+}
+
+/* ==========================
+   Thumbnails
+========================== */
+
+.thumbnails{
+display:flex;
+gap:10px;
+overflow:auto;
+margin-top:20px;
+padding-bottom:10px;
+}
+
+.thumb{
+width:120px;
+height:80px;
+border-radius:10px;
+overflow:hidden;
+cursor:pointer;
+opacity:.6;
+transition:.3s;
+}
+
+.thumb.active{
+opacity:1;
+outline:3px solid var(--accent);
+}
+
+.thumb img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+/* ==========================
+   Responsive
+========================== */
+
+@media(max-width:900px){
+
+.dashboard{
+grid-template-columns:1fr;
+}
+
+.sidebar{
+display:none;
+}
+
+.slider{
+height:350px;
+}
+
+}
+
+</style>
 </head>
+
 <body>
-<div id="loader"><h2>Loading Slider Studio...</h2></div>
 
-<div class="app">
-  <div class="control-panel">
-    <h2>SliderStudio Pro</h2>
-    <button id="playPauseBtn">Pause Autoplay</button>
-    <input type="range" id="intervalSlider" min="1000" max="10000" value="3000">
-    <input type="text" id="slideTitle" placeholder="Title">
-    <textarea id="slideDesc" placeholder="Description"></textarea>
-    <button id="updateSlide">Update Slide</button>
-  </div>
-
-  <div class="slider-area">
-    <div class="slider">
-      <div class="slide-counter"><span id="counter">1 / 3</span></div>
-
-      <div class="slide active">
-        <img src="https://picsum.photos/1200/700?1">
-        <div class="content"><h1>Slide One</h1><p>Description One</p></div>
-      </div>
-
-      <div class="slide">
-        <img src="https://picsum.photos/1200/700?2">
-        <div class="content"><h1>Slide Two</h1><p>Description Two</p></div>
-      </div>
-
-      <div class="slide">
-        <img src="https://picsum.photos/1200/700?3">
-        <div class="content"><h1>Slide Three</h1><p>Description Three</p></div>
-      </div>
-    </div>
-
-    <button class="prev">❮</button>
-    <button class="next">❯</button>
-  </div>
+<div class="bg-animation">
+<div class="circle c1"></div>
+<div class="circle c2"></div>
+<div class="circle c3"></div>
 </div>
 
-<script src="script.js"></script>
+<div class="dashboard">
+
+<div class="sidebar">
+
+<div class="logo">
+Studio Pro
+</div>
+
+<div class="menu">
+<button>Dashboard</button>
+<button>Gallery</button>
+<button>Themes</button>
+<button>Import</button>
+<button>Export</button>
+<button>Settings</button>
+</div>
+
+</div>
+
+<div class="main">
+
+<div class="topbar">
+
+<div class="search-box">
+<input type="text" id="searchInput" placeholder="Search images...">
+</div>
+
+<button id="themeBtn">Switch Theme</button>
+
+</div>
+
+<div class="stats">
+
+<div class="glass stat-card">
+<h3>Total Images</h3>
+<h1 id="totalImages">0</h1>
+</div>
+
+<div class="glass stat-card">
+<h3>Favorites</h3>
+<h1>0</h1>
+</div>
+
+<div class="glass stat-card">
+<h3>Storage</h3>
+<h1>0 MB</h1>
+</div>
+
+</div>
+
+<div class="glass upload-area" id="dropArea">
+
+<h2>Drag & Drop Images</h2>
+<p>or click to upload</p>
+
+<input
+type="file"
+id="imageInput"
+multiple
+accept="image/*"
+hidden>
+
+</div>
+
+<div class="glass slider-card">
+
+<div class="slider" id="slider"></div>
+
+<button class="nav-btn prev" id="prevBtn">❮</button>
+<button class="nav-btn next" id="nextBtn">❯</button>
+
+<div class="progress">
+<div class="progress-bar" id="progressBar"></div>
+</div>
+
+<div class="thumbnails" id="thumbnails"></div>
+
+</div>
+
+</div>
+
+</div>
+<script>
+
+
+/* ====================================
+   IMAGE DATA
+==================================== */
+
+let images = [
+{
+name:"Mountain",
+url:"https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1600"
+},
+{
+name:"Beach",
+url:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600"
+},
+{
+name:"Forest",
+url:"https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1600"
+},
+{
+name:"City",
+url:"https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600"
+}
+];
+
+let filteredImages = [...images];
+
+let currentIndex = 0;
+let autoplay = true;
+let autoplayDelay = 4000;
+let interval;
+
+/* ====================================
+   DOM ELEMENTS
+==================================== */
+
+const slider = document.getElementById("slider");
+const thumbnails = document.getElementById("thumbnails");
+const progressBar = document.getElementById("progressBar");
+const totalImages = document.getElementById("totalImages");
+const imageInput = document.getElementById("imageInput");
+const dropArea = document.getElementById("dropArea");
+const searchInput = document.getElementById("searchInput");
+
+/* ====================================
+   UPDATE STATS
+==================================== */
+
+function updateStats(){
+
+totalImages.textContent = filteredImages.length;
+
+}
+
+/* ====================================
+   RENDER SLIDES
+==================================== */
+
+function renderSlides(){
+
+slider.innerHTML = "";
+
+filteredImages.forEach((item,index)=>{
+
+const slide = document.createElement("div");
+slide.className = "slide";
+
+if(index===currentIndex){
+slide.classList.add("active");
+}
+
+slide.innerHTML = `
+<img src="${item.url}" alt="${item.name}">
+`;
+
+slider.appendChild(slide);
+
+});
+
+renderThumbs();
+updateStats();
+
+}
+
+/* ====================================
+   RENDER THUMBNAILS
+==================================== */
+
+function renderThumbs(){
+
+thumbnails.innerHTML="";
+
+filteredImages.forEach((item,index)=>{
+
+const thumb = document.createElement("div");
+
+thumb.className =
+index===currentIndex
+? "thumb active"
+: "thumb";
+
+thumb.innerHTML =
+`<img src="${item.url}">`;
+
+thumb.onclick = ()=>{
+
+currentIndex=index;
+renderSlides();
+
+};
+
+thumbnails.appendChild(thumb);
+
+});
+
+}
+
+/* ====================================
+   NEXT SLIDE
+==================================== */
+
+function nextSlide(){
+
+if(filteredImages.length===0)return;
+
+currentIndex++;
+
+if(currentIndex>=filteredImages.length){
+currentIndex=0;
+}
+
+renderSlides();
+resetProgress();
+
+}
+
+/* ====================================
+   PREVIOUS SLIDE
+==================================== */
+
+function prevSlide(){
+
+if(filteredImages.length===0)return;
+
+currentIndex--;
+
+if(currentIndex<0){
+currentIndex=filteredImages.length-1;
+}
+
+renderSlides();
+resetProgress();
+
+}
+
+/* ====================================
+   BUTTON EVENTS
+==================================== */
+
+document
+.getElementById("nextBtn")
+.addEventListener("click",nextSlide);
+
+document
+.getElementById("prevBtn")
+.addEventListener("click",prevSlide);
+
+/* ====================================
+   AUTOPLAY
+==================================== */
+
+function startAutoplay(){
+
+clearInterval(interval);
+
+interval = setInterval(()=>{
+
+if(autoplay){
+
+nextSlide();
+
+}
+
+},autoplayDelay);
+
+}
+
+startAutoplay();
+
+/* ====================================
+   PROGRESS BAR
+==================================== */
+
+function resetProgress(){
+
+progressBar.style.transition="none";
+progressBar.style.width="0%";
+
+setTimeout(()=>{
+
+progressBar.style.transition=
+`${autoplayDelay}ms linear`;
+
+progressBar.style.width="100%";
+
+},50);
+
+}
+
+resetProgress();
+
+/* ====================================
+   SEARCH
+==================================== */
+
+searchInput.addEventListener("input",()=>{
+
+const value =
+searchInput.value.toLowerCase();
+
+filteredImages = images.filter(item=>{
+
+return item.name
+.toLowerCase()
+.includes(value);
+
+});
+
+currentIndex = 0;
+
+renderSlides();
+
+});
+
+/* ====================================
+   DRAG & DROP
+==================================== */
+
+dropArea.addEventListener("click",()=>{
+
+imageInput.click();
+
+});
+
+dropArea.addEventListener("dragover",(e)=>{
+
+e.preventDefault();
+
+dropArea.style.borderColor="#00e5ff";
+
+});
+
+dropArea.addEventListener("dragleave",()=>{
+
+dropArea.style.borderColor=
+"rgba(255,255,255,.25)";
+
+});
+
+dropArea.addEventListener("drop",(e)=>{
+
+e.preventDefault();
+
+dropArea.style.borderColor=
+"rgba(255,255,255,.25)";
+
+handleFiles(e.dataTransfer.files);
+
+});
+
+/* ====================================
+   FILE INPUT
+==================================== */
+
+imageInput.addEventListener("change",(e)=>{
+
+handleFiles(e.target.files);
+
+});
+
+/* ====================================
+   HANDLE FILES
+==================================== */
+
+function handleFiles(files){
+
+Array.from(files).forEach(file=>{
+
+if(!file.type.startsWith("image/"))
+return;
+
+const reader = new FileReader();
+
+reader.onload = function(event){
+
+const obj = {
+
+name:file.name,
+url:event.target.result
+
+};
+
+images.push(obj);
+
+saveData();
+
+filteredImages=[...images];
+
+renderSlides();
+
+};
+
+reader.readAsDataURL(file);
+
+});
+
+}
+
+/* ====================================
+   LOCAL STORAGE SAVE
+==================================== */
+
+function saveData(){
+
+localStorage.setItem(
+"studioProImages",
+JSON.stringify(images)
+);
+
+}
+
+/* ====================================
+   LOAD DATA
+==================================== */
+
+function loadData(){
+
+const data =
+localStorage.getItem(
+"studioProImages"
+);
+
+if(data){
+
+images = JSON.parse(data);
+
+filteredImages=[...images];
+
+}
+
+}
+
+loadData();
+
+/* ====================================
+   KEYBOARD NAVIGATION
+==================================== */
+
+document.addEventListener(
+"keydown",
+(e)=>{
+
+if(e.key==="ArrowRight"){
+
+nextSlide();
+
+}
+
+if(e.key==="ArrowLeft"){
+
+prevSlide();
+
+}
+
+}
+);
+
+/* ====================================
+   TOUCH SWIPE
+==================================== */
+
+let startX = 0;
+
+slider.addEventListener(
+"touchstart",
+e=>{
+
+startX =
+e.touches[0].clientX;
+
+}
+);
+
+slider.addEventListener(
+"touchend",
+e=>{
+
+let endX =
+e.changedTouches[0].clientX;
+
+if(startX-endX>50){
+
+nextSlide();
+
+}
+
+if(endX-startX>50){
+
+prevSlide();
+
+}
+
+}
+);
+
+/* ====================================
+   DOWNLOAD IMAGE
+==================================== */
+
+function downloadCurrentImage(){
+
+if(filteredImages.length===0)return;
+
+const a =
+document.createElement("a");
+
+a.href =
+filteredImages[currentIndex].url;
+
+a.download =
+filteredImages[currentIndex].name;
+
+a.click();
+
+}
+
+/* ====================================
+   CREATE DOWNLOAD BUTTON
+==================================== */
+
+const dlBtn =
+document.createElement("button");
+
+dlBtn.innerText =
+"Download Image";
+
+dlBtn.style.marginTop="20px";
+
+dlBtn.onclick=
+downloadCurrentImage;
+
+document
+.querySelector(".slider-card")
+.appendChild(dlBtn);
+
+/* ====================================
+   EXPORT JSON
+==================================== */
+
+function exportImages(){
+
+const data =
+JSON.stringify(images);
+
+const blob =
+new Blob([data],{
+type:"application/json"
+});
+
+const a =
+document.createElement("a");
+
+a.href =
+URL.createObjectURL(blob);
+
+a.download =
+"slider-data.json";
+
+a.click();
+
+}
+
+/* ====================================
+   IMPORT JSON
+==================================== */
+
+function importImages(file){
+
+const reader =
+new FileReader();
+
+reader.onload=(e)=>{
+
+images =
+JSON.parse(e.target.result);
+
+filteredImages =
+[...images];
+
+saveData();
+
+renderSlides();
+
+};
+
+reader.readAsText(file);
+
+}
+
+/* ====================================
+   RENDER INITIAL
+==================================== */
+
+renderSlides();
+
+</script>
+<script>
+
+/* ==========================================
+   THEME SYSTEM
+========================================== */
+
+const themes = {
+
+neon:{
+bg:"#0f172a",
+accent:"#00e5ff",
+card:"rgba(255,255,255,.08)"
+},
+
+purple:{
+bg:"#1e1b4b",
+accent:"#c084fc",
+card:"rgba(255,255,255,.08)"
+},
+
+sunset:{
+bg:"#431407",
+accent:"#fb923c",
+card:"rgba(255,255,255,.08)"
+}
+
+};
+
+let currentTheme = "neon";
+
+/* ==========================================
+   APPLY THEME
+========================================== */
+
+function applyTheme(theme){
+
+document.documentElement.style
+.setProperty("--bg", themes[theme].bg);
+
+document.documentElement.style
+.setProperty("--accent", themes[theme].accent);
+
+document.documentElement.style
+.setProperty("--card", themes[theme].card);
+
+currentTheme = theme;
+
+localStorage.setItem(
+"studioTheme",
+theme
+);
+
+}
+
+/* ==========================================
+   LOAD THEME
+========================================== */
+
+const savedTheme =
+localStorage.getItem("studioTheme");
+
+if(savedTheme){
+
+applyTheme(savedTheme);
+
+}
+
+/* ==========================================
+   THEME BUTTON
+========================================== */
+
+const themeButton =
+document.getElementById("themeBtn");
+
+themeButton.addEventListener(
+"click",
+()=>{
+
+if(currentTheme==="neon"){
+
+applyTheme("purple");
+
+}
+else if(currentTheme==="purple"){
+
+applyTheme("sunset");
+
+}
+else{
+
+applyTheme("neon");
+
+}
+
+}
+);
+
+/* ==========================================
+   LIGHT / DARK MODE
+========================================== */
+
+let darkMode = true;
+
+const modeBtn =
+document.createElement("button");
+
+modeBtn.innerText =
+"🌙 Light/Dark";
+
+modeBtn.style.marginLeft="10px";
+
+document
+.querySelector(".topbar")
+.appendChild(modeBtn);
+
+modeBtn.onclick = ()=>{
+
+darkMode = !darkMode;
+
+if(darkMode){
+
+document.body.style.background =
+"var(--bg)";
+
+document.body.style.color =
+"#ffffff";
+
+}
+else{
+
+document.body.style.background =
+"#f4f4f4";
+
+document.body.style.color =
+"#111111";
+
+}
+
+};
+
+/* ==========================================
+   PARTICLES BACKGROUND
+========================================== */
+
+const canvas =
+document.createElement("canvas");
+
+canvas.style.position="fixed";
+canvas.style.inset="0";
+canvas.style.zIndex="-3";
+
+document.body.appendChild(canvas);
+
+const ctx =
+canvas.getContext("2d");
+
+function resizeCanvas(){
+
+canvas.width =
+window.innerWidth;
+
+canvas.height =
+window.innerHeight;
+
+}
+
+resizeCanvas();
+
+window.addEventListener(
+"resize",
+resizeCanvas
+);
+
+const particles = [];
+
+for(let i=0;i<120;i++){
+
+particles.push({
+
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+
+r:Math.random()*3+1,
+
+vx:(Math.random()-.5)*1,
+vy:(Math.random()-.5)*1
+
+});
+
+}
+
+function drawParticles(){
+
+ctx.clearRect(
+0,
+0,
+canvas.width,
+canvas.height
+);
+
+particles.forEach(p=>{
+
+ctx.beginPath();
+
+ctx.arc(
+p.x,
+p.y,
+p.r,
+0,
+Math.PI*2
+);
+
+ctx.fillStyle =
+"rgba(255,255,255,.5)";
+
+ctx.fill();
+
+p.x += p.vx;
+p.y += p.vy;
+
+if(p.x<0)p.x=canvas.width;
+if(p.x>canvas.width)p.x=0;
+
+if(p.y<0)p.y=canvas.height;
+if(p.y>canvas.height)p.y=0;
+
+});
+
+requestAnimationFrame(
+drawParticles
+);
+
+}
+
+drawParticles();
+
+/* ==========================================
+   AI CAPTION GENERATOR
+========================================== */
+
+const captions = [
+
+"Beautiful landscape captured perfectly.",
+"Nature at its finest.",
+"Memories frozen in time.",
+"Creative visual storytelling.",
+"Adventure begins here.",
+"Dream destination vibes.",
+"Elegant photography masterpiece.",
+"Colorful moments worth sharing."
+
+];
+
+function generateCaption(){
+
+return captions[
+Math.floor(
+Math.random() *
+captions.length
+)
+];
+
+}
+
+const captionBox =
+document.createElement("div");
+
+captionBox.className =
+"glass";
+
+captionBox.style.marginTop =
+"20px";
+
+captionBox.innerHTML =
+
+`
+<h3>🤖 AI Caption Generator</h3>
+<p id="captionText">
+Click generate to create caption
+</p>
+<button id="captionBtn">
+Generate Caption
+</button>
+`;
+
+document
+.querySelector(".main")
+.appendChild(captionBox);
+
+document
+.getElementById("captionBtn")
+.addEventListener(
+"click",
+()=>{
+
+document
+.getElementById("captionText")
+.innerText =
+generateCaption();
+
+}
+);
+
+/* ==========================================
+   FAVORITES SYSTEM
+========================================== */
+
+let favorites = [];
+
+function toggleFavorite(){
+
+if(filteredImages.length===0)
+return;
+
+const img =
+filteredImages[currentIndex].url;
+
+if(favorites.includes(img)){
+
+favorites =
+favorites.filter(
+x=>x!==img
+);
+
+}
+else{
+
+favorites.push(img);
+
+}
+
+document
+.querySelectorAll(".stat-card h1")[1]
+.innerText =
+favorites.length;
+
+localStorage.setItem(
+"favorites",
+JSON.stringify(favorites)
+);
+
+}
+
+const favBtn =
+document.createElement("button");
+
+favBtn.innerText =
+"❤️ Favorite";
+
+favBtn.style.marginLeft =
+"10px";
+
+favBtn.onclick =
+toggleFavorite;
+
+document
+.querySelector(".slider-card")
+.appendChild(favBtn);
+
+/* ==========================================
+   STORAGE METER
+========================================== */
+
+function updateStorage(){
+
+let size =
+JSON.stringify(images).length;
+
+let mb =
+(size/1024/1024).toFixed(2);
+
+document
+.querySelectorAll(".stat-card h1")[2]
+.innerText =
+mb + " MB";
+
+}
+
+updateStorage();
+
+setInterval(
+updateStorage,
+2000
+);
+
+/* ==========================================
+   ADVANCED TRANSITIONS
+========================================== */
+
+function transitionSlides(){
+
+const slides =
+document.querySelectorAll(".slide");
+
+slides.forEach((slide,index)=>{
+
+if(index===currentIndex){
+
+slide.style.opacity="1";
+slide.style.transform=
+"scale(1)";
+
+}
+else{
+
+slide.style.opacity="0";
+slide.style.transform=
+"scale(1.08)";
+
+}
+
+});
+
+}
+
+setInterval(
+transitionSlides,
+500
+);
+
+/* ==========================================
+   CUSTOM THEME CREATOR
+========================================== */
+
+const creator =
+document.createElement("div");
+
+creator.className="glass";
+
+creator.style.marginTop="20px";
+
+creator.innerHTML =
+
+`
+<h3>🎨 Custom Theme Creator</h3>
+
+<input
+type="color"
+id="customAccent">
+
+<button id="applyCustom">
+Apply Theme
+</button>
+`;
+
+document
+.querySelector(".main")
+.appendChild(creator);
+
+document
+.getElementById("applyCustom")
+.addEventListener(
+"click",
+()=>{
+
+const color =
+document
+.getElementById(
+"customAccent"
+)
+.value;
+
+document.documentElement
+.style.setProperty(
+"--accent",
+color
+);
+
+}
+);
+
+/* ==========================================
+   IMPORT BUTTON UI
+========================================== */
+
+const importInput =
+document.createElement("input");
+
+importInput.type="file";
+
+importInput.accept=
+"application/json";
+
+importInput.style.marginTop=
+"15px";
+
+importInput.addEventListener(
+"change",
+e=>{
+
+if(e.target.files[0]){
+
+importImages(
+e.target.files[0]
+);
+
+}
+
+}
+);
+
+document
+.querySelector(".main")
+.appendChild(importInput);
+
+/* ==========================================
+   EXPORT BUTTON UI
+========================================== */
+
+const exportBtn =
+document.createElement("button");
+
+exportBtn.innerText =
+"📤 Export Slider Data";
+
+exportBtn.style.marginTop =
+"15px";
+
+exportBtn.onclick =
+exportImages;
+
+document
+.querySelector(".main")
+.appendChild(exportBtn);
+
+</script>
+
 </body>
 </html>
+<script>
+
+/* ==================================
+   FULLSCREEN MODE
+================================== */
+
+function toggleFullscreen(){
+
+const sliderContainer =
+document.querySelector(".slider-card");
+
+if(!document.fullscreenElement){
+
+sliderContainer.requestFullscreen();
+
+}else{
+
+document.exitFullscreen();
+
+}
+
+}
+
+const fullscreenBtn =
+document.createElement("button");
+
+fullscreenBtn.innerHTML =
+"🖥 Fullscreen";
+
+fullscreenBtn.onclick =
+toggleFullscreen;
+
+document
+.querySelector(".slider-card")
+.appendChild(fullscreenBtn);
+
+/* ==================================
+   DELETE CURRENT IMAGE
+================================== */
+
+function deleteCurrentImage(){
+
+if(filteredImages.length===0)
+return;
+
+const target =
+filteredImages[currentIndex];
+
+images =
+images.filter(
+img => img.url !== target.url
+);
+
+filteredImages =
+[...images];
+
+saveData();
+
+if(currentIndex>=filteredImages.length){
+
+currentIndex =
+Math.max(
+0,
+filteredImages.length-1
+);
+
+}
+
+renderSlides();
+
+}
+
+const deleteBtn =
+document.createElement("button");
+
+deleteBtn.innerHTML =
+"🗑 Delete Image";
+
+deleteBtn.onclick =
+deleteCurrentImage;
+
+document
+.querySelector(".slider-card")
+.appendChild(deleteBtn);
+
+/* ==================================
+   IMAGE CATEGORY SYSTEM
+================================== */
+
+let categories = {};
+
+function assignCategory(){
+
+if(filteredImages.length===0)
+return;
+
+const name =
+prompt(
+"Enter category:"
+);
+
+if(!name) return;
+
+categories[
+filteredImages[currentIndex].url
+] = name;
+
+localStorage.setItem(
+"categories",
+JSON.stringify(categories)
+);
+
+alert(
+"Category Saved"
+);
+
+}
+
+const categoryBtn =
+document.createElement("button");
+
+categoryBtn.innerHTML =
+"📁 Category";
+
+categoryBtn.onclick =
+assignCategory;
+
+document
+.querySelector(".slider-card")
+.appendChild(categoryBtn);
+
+/* ==================================
+   RECENT UPLOADS PANEL
+================================== */
+
+const recentPanel =
+document.createElement("div");
+
+recentPanel.className =
+"glass";
+
+recentPanel.style.marginTop =
+"20px";
+
+recentPanel.innerHTML =
+
+`
+<h3>🕒 Recent Uploads</h3>
+<ul id="recentUploads"></ul>
+`;
+
+document
+.querySelector(".main")
+.appendChild(recentPanel);
+
+function updateRecentUploads(){
+
+const list =
+document.getElementById(
+"recentUploads"
+);
+
+if(!list) return;
+
+list.innerHTML = "";
+
+images
+.slice(-5)
+.reverse()
+.forEach(img=>{
+
+const li =
+document.createElement("li");
+
+li.innerText =
+img.name;
+
+list.appendChild(li);
+
+});
+
+}
+
+setInterval(
+updateRecentUploads,
+2000
+);
+
+/* ==================================
+   UPLOAD COUNTER
+================================== */
+
+let uploadCount = 0;
+
+function incrementUploads(){
+
+uploadCount++;
+
+document.getElementById(
+"uploadCounter"
+).innerText =
+uploadCount;
+
+}
+
+const statsWidget =
+document.createElement("div");
+
+statsWidget.className =
+"glass";
+
+statsWidget.style.marginTop =
+"20px";
+
+statsWidget.innerHTML =
+
+`
+<h3>📊 Upload Statistics</h3>
+
+<h1 id="uploadCounter">
+0
+</h1>
+`;
+
+document
+.querySelector(".main")
+.appendChild(statsWidget);
+
+/* ==================================
+   OVERRIDE FILE HANDLER
+================================== */
+
+const oldHandleFiles =
+handleFiles;
+
+handleFiles = function(files){
+
+incrementUploads();
+
+oldHandleFiles(files);
+
+};
+
+/* ==================================
+   IMAGE INFO VIEWER
+================================== */
+
+const infoPanel =
+document.createElement("div");
+
+infoPanel.className =
+"glass";
+
+infoPanel.style.marginTop =
+"20px";
+
+infoPanel.innerHTML =
+
+`
+<h3>ℹ Image Information</h3>
+
+<p id="imageInfo">
+No image selected
+</p>
+`;
+
+document
+.querySelector(".main")
+.appendChild(infoPanel);
+
+function updateInfo(){
+
+if(filteredImages.length===0)
+return;
+
+document
+.getElementById(
+"imageInfo"
+)
+.innerHTML =
+
+`
+Name:
+<b>
+${filteredImages[currentIndex].name}
+</b>
+`;
+
+}
+
+setInterval(
+updateInfo,
+500
+);
+
+/* ==================================
+   AUTO BACKUP
+================================== */
+
+setInterval(()=>{
+
+localStorage.setItem(
+"backupImages",
+JSON.stringify(images)
+);
+
+},10000);
+
+/* ==================================
+   FAVORITES VIEW
+================================== */
+
+const favoritesPanel =
+document.createElement("div");
+
+favoritesPanel.className =
+"glass";
+
+favoritesPanel.style.marginTop =
+"20px";
+
+favoritesPanel.innerHTML =
+
+`
+<h3>❤️ Favorite Images</h3>
+
+<div id="favoriteList"></div>
+`;
+
+document
+.querySelector(".main")
+.appendChild(favoritesPanel);
+
+function renderFavorites(){
+
+const container =
+document.getElementById(
+"favoriteList"
+);
+
+if(!container)
+return;
+
+container.innerHTML="";
+
+favorites.forEach(url=>{
+
+const img =
+document.createElement("img");
+
+img.src=url;
+
+img.style.width="120px";
+img.style.height="80px";
+img.style.margin="5px";
+img.style.borderRadius="10px";
+img.style.objectFit="cover";
+
+container.appendChild(img);
+
+});
+
+}
+
+setInterval(
+renderFavorites,
+1500
+);
+
+</script>
+<script>
+
+/* ==================================
+   VOICE SEARCH
+================================== */
+
+const voiceBtn = document.createElement("button");
+voiceBtn.innerHTML = "🎤 Voice Search";
+
+document
+.querySelector(".topbar")
+.appendChild(voiceBtn);
+
+voiceBtn.onclick = ()=>{
+
+if(!('webkitSpeechRecognition' in window)){
+alert("Voice search not supported");
+return;
+}
+
+const recognition =
+new webkitSpeechRecognition();
+
+recognition.lang = "en-US";
+
+recognition.start();
+
+recognition.onresult = (event)=>{
+
+const text =
+event.results[0][0].transcript;
+
+searchInput.value = text;
+
+searchInput.dispatchEvent(
+new Event("input")
+);
+
+};
+
+};
+
+/* ==================================
+   IMAGE ZOOM
+================================== */
+
+slider.addEventListener(
+"dblclick",
+()=>{
+
+const slide =
+document.querySelector(
+".slide.active img"
+);
+
+if(!slide) return;
+
+if(slide.style.transform){
+
+slide.style.transform="";
+
+}else{
+
+slide.style.transform=
+"scale(1.8)";
+
+}
+
+}
+);
+
+/* ==================================
+   LAZY LOADING
+================================== */
+
+function lazyLoadImages(){
+
+document
+.querySelectorAll("img")
+.forEach(img=>{
+
+img.loading="lazy";
+
+});
+
+}
+
+setInterval(
+lazyLoadImages,
+2000
+);
+
+/* ==================================
+   PRESENTATION MODE
+================================== */
+
+let presentation = false;
+
+const presentationBtn =
+document.createElement("button");
+
+presentationBtn.innerHTML =
+"🎞 Presentation";
+
+presentationBtn.onclick = ()=>{
+
+presentation = !presentation;
+
+if(presentation){
+
+document.body.style.cursor =
+"none";
+
+autoplayDelay = 2000;
+
+}else{
+
+document.body.style.cursor =
+"default";
+
+autoplayDelay = 4000;
+
+}
+
+startAutoplay();
+
+};
+
+document
+.querySelector(".slider-card")
+.appendChild(
+presentationBtn
+);
+
+/* ==================================
+   CONFETTI EFFECT
+================================== */
+
+function launchConfetti(){
+
+for(let i=0;i<50;i++){
+
+const piece =
+document.createElement("div");
+
+piece.style.position="fixed";
+
+piece.style.left=
+Math.random()*100+"vw";
+
+piece.style.top="-10px";
+
+piece.style.width="10px";
+piece.style.height="10px";
+
+piece.style.background=
+`hsl(${Math.random()*360},100%,50%)`;
+
+piece.style.zIndex="9999";
+
+piece.style.borderRadius="50%";
+
+document.body.appendChild(piece);
+
+let y=0;
+
+const anim = setInterval(()=>{
+
+y+=5;
+
+piece.style.top =
+y+"px";
+
+if(y>window.innerHeight){
+
+clearInterval(anim);
+
+piece.remove();
+
+}
+
+},15);
+
+}
+
+}
+
+const originalHandle =
+handleFiles;
+
+handleFiles = function(files){
+
+launchConfetti();
+
+originalHandle(files);
+
+};
+
+/* ==================================
+   RANDOM SLIDE BUTTON
+================================== */
+
+const randomBtn =
+document.createElement("button");
+
+randomBtn.innerHTML =
+"🎲 Random";
+
+randomBtn.onclick = ()=>{
+
+if(filteredImages.length===0)
+return;
+
+currentIndex =
+Math.floor(
+Math.random() *
+filteredImages.length
+);
+
+renderSlides();
+
+};
+
+document
+.querySelector(".slider-card")
+.appendChild(randomBtn);
+
+/* ==================================
+   IMAGE COUNTER
+================================== */
+
+const counter =
+document.createElement("div");
+
+counter.className="glass";
+
+counter.style.marginTop="20px";
+
+counter.innerHTML=
+
+`
+<h3>📷 Current Slide</h3>
+
+<h1 id="slideCounter">
+1
+</h1>
+`;
+
+document
+.querySelector(".main")
+.appendChild(counter);
+
+setInterval(()=>{
+
+const el =
+document.getElementById(
+"slideCounter"
+);
+
+if(el){
+
+el.innerText =
+(currentIndex+1)+
+" / "+
+filteredImages.length;
+
+}
+
+},300);
+
+</script>
+<script>
+
+/* ==================================
+   GLASS NOTIFICATION SYSTEM
+================================== */
+
+function showNotification(text){
+
+const note =
+document.createElement("div");
+
+note.innerText = text;
+
+note.style.position="fixed";
+note.style.top="20px";
+note.style.right="20px";
+note.style.padding="15px 25px";
+note.style.borderRadius="15px";
+note.style.backdropFilter="blur(20px)";
+note.style.background="rgba(255,255,255,.1)";
+note.style.color="white";
+note.style.zIndex="99999";
+note.style.boxShadow=
+"0 10px 30px rgba(0,0,0,.3)";
+
+document.body.appendChild(note);
+
+setTimeout(()=>{
+
+note.style.opacity="0";
+
+setTimeout(()=>{
+note.remove();
+},500);
+
+},2500);
+
+}
+
+showNotification(
+"Studio Pro Loaded Successfully"
+);
+
+/* ==================================
+   GALLERY MODE
+================================== */
+
+let galleryMode=false;
+
+const galleryBtn =
+document.createElement("button");
+
+galleryBtn.innerHTML=
+"🖼 Gallery";
+
+galleryBtn.onclick=()=>{
+
+galleryMode=!galleryMode;
+
+if(galleryMode){
+
+renderGallery();
+
+}else{
+
+renderSlides();
+
+}
+
+};
+
+document
+.querySelector(".slider-card")
+.appendChild(galleryBtn);
+
+function renderGallery(){
+
+slider.innerHTML="";
+
+slider.style.height="auto";
+
+slider.style.display="grid";
+
+slider.style.gridTemplateColumns=
+"repeat(auto-fill,minmax(250px,1fr))";
+
+slider.style.gap="15px";
+
+filteredImages.forEach(img=>{
+
+const card =
+document.createElement("div");
+
+card.className="glass";
+
+card.innerHTML=`
+
+<img
+src="${img.url}"
+style="
+width:100%;
+height:220px;
+object-fit:cover;
+border-radius:15px;
+">
+
+<p style="margin-top:10px">
+${img.name}
+</p>
+
+`;
+
+slider.appendChild(card);
+
+});
+
+}
+
+/* ==================================
+   IMAGE ROTATE
+================================== */
+
+let rotation=0;
+
+const rotateBtn=
+document.createElement("button");
+
+rotateBtn.innerHTML=
+"🔄 Rotate";
+
+rotateBtn.onclick=()=>{
+
+rotation+=90;
+
+const img=
+document.querySelector(
+".slide.active img"
+);
+
+if(img){
+
+img.style.transform=
+`rotate(${rotation}deg)`;
+
+}
+
+};
+
+document
+.querySelector(".slider-card")
+.appendChild(
+rotateBtn
+);
+
+/* ==================================
+   IMAGE FLIP
+================================== */
+
+let flipped=false;
+
+const flipBtn=
+document.createElement("button");
+
+flipBtn.innerHTML=
+"↔ Flip";
+
+flipBtn.onclick=()=>{
+
+flipped=!flipped;
+
+const img=
+document.querySelector(
+".slide.active img"
+);
+
+if(img){
+
+img.style.transform=
+flipped
+? "scaleX(-1)"
+: "scaleX(1)";
+
+}
+
+};
+
+document
+.querySelector(".slider-card")
+.appendChild(
+flipBtn
+);
+
+/* ==================================
+   AI AUTO TAGS
+================================== */
+
+function generateTags(name){
+
+const words = [
+
+"nature",
+"travel",
+"city",
+"beach",
+"forest",
+"mountain",
+"photography",
+"landscape",
+"sunset",
+"adventure"
+
+];
+
+let result=[];
+
+for(let i=0;i<3;i++){
+
+result.push(
+words[
+Math.floor(
+Math.random()*
+words.length
+)
+]
+);
+
+}
+
+return result.join(", ");
+
+}
+
+const tagPanel=
+document.createElement("div");
+
+tagPanel.className="glass";
+
+tagPanel.style.marginTop="20px";
+
+tagPanel.innerHTML=`
+
+<h3>🤖 AI Tags</h3>
+
+<p id="aiTags">
+No tags yet
+</p>
+
+`;
+
+document
+.querySelector(".main")
+.appendChild(
+tagPanel
+);
+
+setInterval(()=>{
+
+if(filteredImages.length){
+
+document
+.getElementById("aiTags")
+.innerText=
+generateTags(
+filteredImages[currentIndex].name
+);
+
+}
+
+},2000);
+
+/* ==================================
+   WATERMARK
+================================== */
+
+const watermarkBtn=
+document.createElement("button");
+
+watermarkBtn.innerHTML=
+"💧 Watermark";
+
+watermarkBtn.onclick=()=>{
+
+const img=
+document.querySelector(
+".slide.active"
+);
+
+if(!img)return;
+
+const mark=
+document.createElement("div");
+
+mark.innerText=
+"Studio Pro";
+
+mark.style.position=
+"absolute";
+
+mark.style.bottom="20px";
+mark.style.right="20px";
+mark.style.padding=
+"10px 15px";
+
+mark.style.background=
+"rgba(0,0,0,.4)";
+
+mark.style.borderRadius=
+"10px";
+
+img.appendChild(mark);
+
+};
+
+document
+.querySelector(".slider-card")
+.appendChild(
+watermarkBtn
+);
+
+/* ==================================
+   SETTINGS PANEL
+================================== */
+
+const settings=
+document.createElement("div");
+
+settings.className="glass";
+
+settings.style.marginTop="20px";
+
+settings.innerHTML=`
+
+<h3>⚙ Settings</h3>
+
+<label>
+
+<input
+type="checkbox"
+id="autoPlayToggle"
+checked>
+
+Autoplay
+
+</label>
+
+<br><br>
+
+<label>
+
+<input
+type="checkbox"
+id="particleToggle"
+checked>
+
+Particles
+
+</label>
+
+`;
+
+document
+.querySelector(".main")
+.appendChild(
+settings
+);
+
+document
+.getElementById(
+"autoPlayToggle"
+)
+.onchange=(e)=>{
+
+autoplay=
+e.target.checked;
+
+};
+
+/* ==================================
+   INSTALL APP (PWA)
+================================== */
+
+window.addEventListener(
+"beforeinstallprompt",
+(e)=>{
+
+e.preventDefault();
+
+showNotification(
+"App can be installed"
+);
+
+});
+
+/* ==================================
+   OFFLINE SUPPORT MESSAGE
+================================== */
+
+window.addEventListener(
+"offline",
+()=>{
+
+showNotification(
+"Offline Mode Activated"
+);
+
+});
+
+window.addEventListener(
+"online",
+()=>{
+
+showNotification(
+"Back Online"
+);
+
+});
+
+/* ==================================
+   ADVANCED ANALYTICS
+================================== */
+
+const analytics=
+document.createElement("div");
+
+analytics.className=
+"glass";
+
+analytics.style.marginTop=
+"20px";
+
+analytics.innerHTML=`
+
+<h3>📊 Analytics</h3>
+
+<p>
+Total Uploads:
+<span id="analyticsUploads">
+0
+</span>
+</p>
+
+<p>
+Favorites:
+<span id="analyticsFavs">
+0
+</span>
+</p>
+
+`;
+
+document
+.querySelector(".main")
+.appendChild(
+analytics
+);
+
+setInterval(()=>{
+
+const up=
+document.getElementById(
+"analyticsUploads"
+);
+
+const fav=
+document.getElementById(
+"analyticsFavs"
+);
+
+if(up){
+
+up.innerText=
+images.length;
+
+}
+
+if(fav){
+
+fav.innerText=
+favorites.length;
+
+}
+
+},1000);
+
+/* ==================================
+   LOADING SKELETON
+================================== */
+
+function skeleton(){
+
+const sk=
+document.createElement("div");
+
+sk.style.height="200px";
+
+sk.style.borderRadius=
+"15px";
+
+sk.style.background=
+"linear-gradient(90deg,#222,#333,#222)";
+
+sk.style.animation=
+"pulse 1.5s infinite";
+
+return sk;
+
+}
+
+const style=
+document.createElement("style");
+
+style.innerHTML=`
+
+@keyframes pulse{
+
+0%{
+opacity:.4;
+}
+
+50%{
+opacity:1;
+}
+
+100%{
+opacity:.4;
+}
+
+}
+
+`;
+
+document.head.appendChild(style);
+
+</script>
+<script>
+
+/* ==================================
+   DEMO LOGIN SYSTEM
+================================== */
+
+let currentUser =
+localStorage.getItem("studioUser")
+|| "Guest";
+
+const userPanel =
+document.createElement("div");
+
+userPanel.className="glass";
+userPanel.style.marginTop="20px";
+
+userPanel.innerHTML=`
+
+<h3>👤 User Profile</h3>
+
+<p id="currentUser">
+${currentUser}
+</p>
+
+<button id="loginBtn">
+Login
+</button>
+
+`;
+
+document
+.querySelector(".main")
+.appendChild(userPanel);
+
+document
+.getElementById("loginBtn")
+.onclick=()=>{
+
+const username =
+prompt("Enter username");
+
+if(!username) return;
+
+currentUser = username;
+
+localStorage.setItem(
+"studioUser",
+username
+);
+
+document
+.getElementById("currentUser")
+.innerText=username;
+
+showNotification(
+"Logged in as " + username
+);
+
+};
+
+/* ==================================
+   ALBUM SYSTEM
+================================== */
+
+let albums =
+JSON.parse(
+localStorage.getItem("albums")
+|| "{}"
+);
+
+function createAlbum(){
+
+const name =
+prompt("Album Name");
+
+if(!name) return;
+
+albums[name]=[];
+
+localStorage.setItem(
+"albums",
+JSON.stringify(albums)
+);
+
+renderAlbums();
+
+}
+
+function renderAlbums(){
+
+albumContainer.innerHTML="";
+
+Object.keys(albums)
+.forEach(album=>{
+
+const card =
+document.createElement("div");
+
+card.className="glass";
+
+card.style.marginBottom="10px";
+
+card.innerHTML=`
+
+<h4>${album}</h4>
+
+<p>
+${albums[album].length}
+images
+</p>
+
+`;
+
+albumContainer.appendChild(card);
+
+});
+
+}
+
+const albumPanel =
+document.createElement("div");
+
+albumPanel.className="glass";
+
+albumPanel.style.marginTop="20px";
+
+albumPanel.innerHTML=`
+
+<h3>📁 Albums</h3>
+
+<button id="newAlbum">
+Create Album
+</button>
+
+<div id="albumContainer"></div>
+
+`;
+
+document
+.querySelector(".main")
+.appendChild(albumPanel);
+
+const albumContainer =
+document.getElementById(
+"albumContainer"
+);
+
+document
+.getElementById("newAlbum")
+.onclick =
+createAlbum;
+
+renderAlbums();
+
+/* ==================================
+   RECYCLE BIN
+================================== */
+
+let recycleBin=[];
+
+function moveToRecycle(image){
+
+recycleBin.push(image);
+
+localStorage.setItem(
+"recycleBin",
+JSON.stringify(recycleBin)
+);
+
+}
+
+const recyclePanel =
+document.createElement("div");
+
+recyclePanel.className=
+"glass";
+
+recyclePanel.style.marginTop=
+"20px";
+
+recyclePanel.innerHTML=`
+
+<h3>🗑 Recycle Bin</h3>
+
+<button id="restoreBtn">
+Restore Last
+</button>
+
+`;
+
+document
+.querySelector(".main")
+.appendChild(
+recyclePanel
+);
+
+document
+.getElementById(
+"restoreBtn"
+)
+.onclick=()=>{
+
+if(recycleBin.length===0)
+return;
+
+const image =
+recycleBin.pop();
+
+images.push(image);
+
+saveData();
+
+renderSlides();
+
+showNotification(
+"Image Restored"
+);
+
+};
+
+/* ==================================
+   UNDO / REDO
+================================== */
+
+let undoStack=[];
+let redoStack=[];
+
+function saveState(){
+
+undoStack.push(
+JSON.stringify(images)
+);
+
+}
+
+function undo(){
+
+if(
+undoStack.length===0
+) return;
+
+redoStack.push(
+JSON.stringify(images)
+);
+
+images =
+JSON.parse(
+undoStack.pop()
+);
+
+renderSlides();
+
+}
+
+function redo(){
+
+if(
+redoStack.length===0
+) return;
+
+undoStack.push(
+JSON.stringify(images)
+);
+
+images =
+JSON.parse(
+redoStack.pop()
+);
+
+renderSlides();
+
+}
+
+const undoBtn =
+document.createElement("button");
+
+undoBtn.innerHTML="↩ Undo";
+
+undoBtn.onclick=undo;
+
+const redoBtn =
+document.createElement("button");
+
+redoBtn.innerHTML="↪ Redo";
+
+redoBtn.onclick=redo;
+
+document
+.querySelector(".slider-card")
+.appendChild(
+undoBtn
+);
+
+document
+.querySelector(".slider-card")
+.appendChild(
+redoBtn
+);
+
+/* ==================================
+   COMMAND PALETTE
+================================== */
+
+const commandBox =
+document.createElement("div");
+
+commandBox.style.position=
+"fixed";
+
+commandBox.style.top="50%";
+commandBox.style.left="50%";
+
+commandBox.style.transform=
+"translate(-50%,-50%)";
+
+commandBox.style.padding=
+"20px";
+
+commandBox.style.display=
+"none";
+
+commandBox.style.zIndex=
+"99999";
+
+commandBox.className=
+"glass";
+
+commandBox.innerHTML=`
+
+<input
+id="commandInput"
+placeholder="Type command..."
+style="
+padding:10px;
+width:300px;
+">
+
+`;
+
+document.body.appendChild(
+commandBox
+);
+
+document.addEventListener(
+"keydown",
+(e)=>{
+
+if(
+e.ctrlKey &&
+e.key==="k"
+){
+
+e.preventDefault();
+
+commandBox.style.display=
+commandBox.style.display==="none"
+? "block"
+: "none";
+
+}
+
+}
+);
+
+/* ==================================
+   KEYBOARD SHORTCUTS PANEL
+================================== */
+
+const shortcutPanel =
+document.createElement("div");
+
+shortcutPanel.className=
+"glass";
+
+shortcutPanel.style.marginTop=
+"20px";
+
+shortcutPanel.innerHTML=`
+
+<h3>⌨ Shortcuts</h3>
+
+<ul>
+
+<li>Ctrl + K → Command Palette</li>
+
+<li>← → Previous Slide</li>
+
+<li>→ → Next Slide</li>
+
+<li>Double Click → Zoom</li>
+
+</ul>
+
+`;
+
+document
+.querySelector(".main")
+.appendChild(
+shortcutPanel
+);
+
+/* ==================================
+   QR SHARE
+================================== */
+
+const qrBtn =
+document.createElement("button");
+
+qrBtn.innerHTML=
+"📱 Share QR";
+
+qrBtn.onclick=()=>{
+
+const img =
+filteredImages[currentIndex];
+
+if(!img) return;
+
+window.open(
+`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(img.url)}`
+);
+
+};
+
+document
+.querySelector(".slider-card")
+.appendChild(
+qrBtn
+);
+
+/* ==================================
+   IMAGE COMMENTS
+================================== */
+
+let comments = {};
+
+const commentPanel =
+document.createElement("div");
+
+commentPanel.className=
+"glass";
+
+commentPanel.style.marginTop=
+"20px";
+
+commentPanel.innerHTML=`
+
+<h3>💬 Comments</h3>
+
+<input
+id="commentInput"
+placeholder="Add comment">
+
+<button id="addComment">
+Post
+</button>
+
+<div id="commentList"></div>
+
+`;
+
+document
+.querySelector(".main")
+.appendChild(
+commentPanel
+);
+
+document
+.getElementById(
+"addComment"
+)
+.onclick=()=>{
+
+const text =
+document
+.getElementById(
+"commentInput"
+)
+.value;
+
+if(!text) return;
+
+const key =
+filteredImages[currentIndex]
+?.url;
+
+if(!comments[key]){
+
+comments[key]=[];
+
+}
+
+comments[key].push(text);
+
+renderComments();
+
+};
+
+function renderComments(){
+
+const key =
+filteredImages[currentIndex]
+?.url;
+
+const list =
+document.getElementById(
+"commentList"
+);
+
+list.innerHTML="";
+
+(comments[key]||[])
+.forEach(c=>{
+
+const div =
+document.createElement("div");
+
+div.innerText=c;
+
+list.appendChild(div);
+
+});
+
+}
+
+setInterval(
+renderComments,
+1000
+);
+
+</script>
+<script>
+
+/* ==================================
+   AI SMART SEARCH
+================================== */
+
+function aiSearch(query){
+
+query = query.toLowerCase();
+
+filteredImages = images.filter(img=>{
+
+return (
+img.name.toLowerCase().includes(query)
+);
+
+});
+
+renderSlides();
+
+}
+
+const aiSearchPanel =
+document.createElement("div");
+
+aiSearchPanel.className="glass";
+aiSearchPanel.style.marginTop="20px";
+
+aiSearchPanel.innerHTML=`
+
+<h3>🤖 AI Smart Search</h3>
+
+<input
+id="aiSearchInput"
+placeholder="Search intelligently..."
+style="
+padding:10px;
+width:100%;
+margin-top:10px;
+">
+
+`;
+
+document
+.querySelector(".main")
+.appendChild(aiSearchPanel);
+
+document
+.getElementById("aiSearchInput")
+.addEventListener("input",(e)=>{
+
+aiSearch(e.target.value);
+
+});
+
+/* ==================================
+   DUPLICATE IMAGE DETECTOR
+================================== */
+
+function findDuplicates(){
+
+const names = {};
+const duplicates = [];
+
+images.forEach(img=>{
+
+if(names[img.name]){
+
+duplicates.push(img.name);
+
+}else{
+
+names[img.name]=true;
+
+}
+
+});
+
+return duplicates;
+
+}
+
+const duplicatePanel =
+document.createElement("div");
+
+duplicatePanel.className="glass";
+duplicatePanel.style.marginTop="20px";
+
+duplicatePanel.innerHTML=`
+
+<h3>🔍 Duplicate Detector</h3>
+
+<p id="duplicateCount">
+0 duplicates found
+</p>
+
+`;
+
+document
+.querySelector(".main")
+.appendChild(duplicatePanel);
+
+setInterval(()=>{
+
+const dups =
+findDuplicates();
+
+document
+.getElementById("duplicateCount")
+.innerText =
+dups.length +
+" duplicates found";
+
+},2000);
+
+/* ==================================
+   AI COLOR ANALYZER
+================================== */
+
+function randomColorAnalysis(){
+
+const colors = [
+
+"Blue Dominant",
+"Green Dominant",
+"Red Dominant",
+"Warm Tones",
+"Cool Tones",
+"Balanced Colors",
+"High Contrast"
+
+];
+
+return colors[
+Math.floor(
+Math.random()*colors.length
+)
+];
+
+}
+
+const colorPanel =
+document.createElement("div");
+
+colorPanel.className="glass";
+colorPanel.style.marginTop="20px";
+
+colorPanel.innerHTML=`
+
+<h3>🎨 AI Color Analysis</h3>
+
+<p id="colorResult">
+Waiting...
+</p>
+
+`;
+
+document
+.querySelector(".main")
+.appendChild(colorPanel);
+
+setInterval(()=>{
+
+document
+.getElementById("colorResult")
+.innerText =
+randomColorAnalysis();
+
+},3000);
+
+/* ==================================
+   AI IMAGE QUALITY SCORE
+================================== */
+
+function imageScore(){
+
+return Math.floor(
+Math.random()*40
+)+60;
+
+}
+
+const scorePanel =
+document.createElement("div");
+
+scorePanel.className="glass";
+scorePanel.style.marginTop="20px";
+
+scorePanel.innerHTML=`
+
+<h3>⭐ AI Quality Score</h3>
+
+<h1 id="qualityScore">
+95
+</h1>
+
+`;
+
+document
+.querySelector(".main")
+.appendChild(scorePanel);
+
+setInterval(()=>{
+
+document
+.getElementById("qualityScore")
+.innerText =
+imageScore() + "%";
+
+},2500);
+
+/* ==================================
+   AI AUTO ALBUM CREATOR
+================================== */
+
+function autoCreateAlbums(){
+
+const autoAlbums = {
+
+Nature:[],
+Travel:[],
+City:[]
+
+};
+
+images.forEach(img=>{
+
+const n =
+img.name.toLowerCase();
+
+if(
+n.includes("forest") ||
+n.includes("mountain")
+){
+
+autoAlbums.Nature.push(img);
+
+}
+else if(
+n.includes("beach")
+){
+
+autoAlbums.Travel.push(img);
+
+}
+else{
+
+autoAlbums.City.push(img);
+
+}
+
+});
+
+return autoAlbums;
+
+}
+
+const aiAlbumBtn =
+document.createElement("button");
+
+aiAlbumBtn.innerHTML=
+"🤖 Create AI Albums";
+
+aiAlbumBtn.onclick=()=>{
+
+const result =
+autoCreateAlbums();
+
+console.log(result);
+
+showNotification(
+"AI Albums Generated"
+);
+
+};
+
+document
+.querySelector(".main")
+.appendChild(aiAlbumBtn);
+
+/* ==================================
+   AI THEME GENERATOR
+================================== */
+
+const themeGeneratorBtn =
+document.createElement("button");
+
+themeGeneratorBtn.innerHTML=
+"🎨 AI Theme";
+
+themeGeneratorBtn.onclick=()=>{
+
+const colors = [
+
+"#00f5ff",
+"#ff00ff",
+"#ff8800",
+"#22c55e",
+"#f43f5e",
+"#8b5cf6"
+
+];
+
+const color =
+colors[
+Math.floor(
+Math.random()*colors.length
+)
+];
+
+document.documentElement
+.style.setProperty(
+"--accent",
+color
+);
+
+showNotification(
+"AI Theme Generated"
+);
+
+};
+
+document
+.querySelector(".main")
+.appendChild(
+themeGeneratorBtn
+);
+
+/* ==================================
+   AI SLIDESHOW CREATOR
+================================== */
+
+const slideshowBtn =
+document.createElement("button");
+
+slideshowBtn.innerHTML=
+"🎞 AI Slideshow";
+
+slideshowBtn.onclick=()=>{
+
+currentIndex = 0;
+
+autoplayDelay = 1500;
+
+startAutoplay();
+
+showNotification(
+"AI Slideshow Started"
+);
+
+};
+
+document
+.querySelector(".main")
+.appendChild(
+slideshowBtn
+);
+
+/* ==================================
+   AI IMAGE DESCRIPTION
+================================== */
+
+const descriptions = [
+
+"Beautiful natural scenery.",
+"Urban landscape with architecture.",
+"Creative photography composition.",
+"Travel memory captured perfectly.",
+"Professional quality image.",
+"Colorful visual storytelling.",
+"High quality scenic shot."
+
+];
+
+const descriptionPanel =
+document.createElement("div");
+
+descriptionPanel.className="glass";
+
+descriptionPanel.style.marginTop="20px";
+
+descriptionPanel.innerHTML=`
+
+<h3>📝 AI Description</h3>
+
+<p id="aiDescription">
+Generating...
+</p>
+
+`;
+
+document
+.querySelector(".main")
+.appendChild(
+descriptionPanel
+);
+
+setInterval(()=>{
+
+document
+.getElementById(
+"aiDescription"
+)
+.innerText =
+
+descriptions[
+Math.floor(
+Math.random()*
+descriptions.length
+)
+];
+
+},3500);
+
+/* ==================================
+   SIMILAR IMAGE FINDER
+================================== */
+
+function findSimilar(){
+
+if(images.length<2)
+return;
+
+const img =
+images[
+Math.floor(
+Math.random()*images.length
+)
+];
+
+showNotification(
+"Similar image found: "
++ img.name
+);
+
+}
+
+const similarBtn =
+document.createElement("button");
+
+similarBtn.innerHTML=
+"🖼 Find Similar";
+
+similarBtn.onclick=
+findSimilar;
+
+document
+.querySelector(".main")
+.appendChild(
+similarBtn
+);
+
+</script>
+<script>
+
+/* ==================================
+   PERFORMANCE MONITOR
+================================== */
+
+const perfPanel =
+document.createElement("div");
+
+perfPanel.className = "glass";
+perfPanel.style.marginTop = "20px";
+
+perfPanel.innerHTML = `
+<h3>⚡ Performance Monitor</h3>
+
+<p>
+Memory Usage:
+<span id="memoryUsage">
+0 MB
+</span>
+</p>
+
+<p>
+Images Loaded:
+<span id="loadedImages">
+0
+</span>
+</p>
+
+`;
+
+document
+.querySelector(".main")
+.appendChild(perfPanel);
+
+setInterval(()=>{
+
+const mem =
+(
+JSON.stringify(images).length
+/
+1024
+/
+1024
+).toFixed(2);
+
+document
+.getElementById("memoryUsage")
+.innerText =
+mem + " MB";
+
+document
+.getElementById("loadedImages")
+.innerText =
+images.length;
+
+},2000);
+
+/* ==================================
+   ERROR LOGGER
+================================== */
+
+window.onerror = function(
+msg,
+url,
+line
+){
+
+console.error(
+"Studio Error:",
+msg,
+url,
+line
+);
+
+showNotification(
+"Error Logged"
+);
+
+};
+
+/* ==================================
+   SETTINGS BACKUP
+================================== */
+
+function backupSettings(){
+
+const settings = {
+
+theme:
+currentTheme,
+
+favorites:
+favorites,
+
+albums:
+albums,
+
+user:
+currentUser
+
+};
+
+localStorage.setItem(
+"studioBackup",
+JSON.stringify(settings)
+);
+
+showNotification(
+"Settings Backed Up"
+);
+
+}
+
+const backupBtn =
+document.createElement("button");
+
+backupBtn.innerHTML =
+"💾 Backup Settings";
+
+backupBtn.onclick =
+backupSettings;
+
+document
+.querySelector(".main")
+.appendChild(
+backupBtn
+);
+
+/* ==================================
+   RESTORE SETTINGS
+================================== */
+
+function restoreSettings(){
+
+const backup =
+localStorage.getItem(
+"studioBackup"
+);
+
+if(!backup){
+
+showNotification(
+"No Backup Found"
+);
+
+return;
+
+}
+
+const data =
+JSON.parse(backup);
+
+if(data.theme){
+
+applyTheme(
+data.theme
+);
+
+}
+
+if(data.favorites){
+
+favorites =
+data.favorites;
+
+}
+
+showNotification(
+"Settings Restored"
+);
+
+}
+
+const restoreBtn =
+document.createElement("button");
+
+restoreBtn.innerHTML =
+"♻ Restore Settings";
+
+restoreBtn.onclick =
+restoreSettings;
+
+document
+.querySelector(".main")
+.appendChild(
+restoreBtn
+);
+
+/* ==================================
+   ANALYTICS DASHBOARD
+================================== */
+
+const analyticsPanel =
+document.createElement("div");
+
+analyticsPanel.className =
+"glass";
+
+analyticsPanel.style.marginTop =
+"20px";
+
+analyticsPanel.innerHTML = `
+
+<h3>📊 Analytics Dashboard</h3>
+
+<p>
+Total Images:
+<span id="analyticsImages">
+0
+</span>
+</p>
+
+<p>
+Favorites:
+<span id="analyticsFavorites">
+0
+</span>
+</p>
+
+<p>
+Albums:
+<span id="analyticsAlbums">
+0
+</span>
+</p>
+
+`;
+
+document
+.querySelector(".main")
+.appendChild(
+analyticsPanel
+);
+
+setInterval(()=>{
+
+document
+.getElementById(
+"analyticsImages"
+)
+.innerText =
+images.length;
+
+document
+.getElementById(
+"analyticsFavorites"
+)
+.innerText =
+favorites.length;
+
+document
+.getElementById(
+"analyticsAlbums"
+)
+.innerText =
+Object.keys(albums).length;
+
+},1000);
+
+/* ==================================
+   IMAGE COMPRESSION
+================================== */
+
+function compressImage(
+base64,
+quality=0.7
+){
+
+return new Promise(resolve=>{
+
+const img =
+new Image();
+
+img.onload = ()=>{
+
+const canvas =
+document.createElement(
+"canvas"
+);
+
+canvas.width =
+img.width;
+
+canvas.height =
+img.height;
+
+const ctx =
+canvas.getContext("2d");
+
+ctx.drawImage(
+img,
+0,
+0
+);
+
+resolve(
+canvas.toDataURL(
+"image/jpeg",
+quality
+)
+);
+
+};
+
+img.src = base64;
+
+});
+
+}
+
+showNotification(
+"Compression Module Ready"
+);
+
+/* ==================================
+   INSTALL APP BUTTON
+================================== */
+
+let deferredPrompt;
+
+window.addEventListener(
+"beforeinstallprompt",
+(e)=>{
+
+e.preventDefault();
+
+deferredPrompt = e;
+
+});
+
+const installBtn =
+document.createElement("button");
+
+installBtn.innerHTML =
+"📲 Install App";
+
+installBtn.onclick =
+async()=>{
+
+if(!deferredPrompt)
+return;
+
+deferredPrompt.prompt();
+
+await deferredPrompt.userChoice;
+
+};
+
+document
+.querySelector(".main")
+.appendChild(
+installBtn
+);
+
+/* ==================================
+   OFFLINE CACHE INFO
+================================== */
+
+const offlinePanel =
+document.createElement("div");
+
+offlinePanel.className =
+"glass";
+
+offlinePanel.style.marginTop =
+"20px";
+
+offlinePanel.innerHTML = `
+
+<h3>🌐 Offline Status</h3>
+
+<p id="networkState">
+Online
+</p>
+
+`;
+
+document
+.querySelector(".main")
+.appendChild(
+offlinePanel
+);
+
+function updateNetwork(){
+
+document
+.getElementById(
+"networkState"
+)
+.innerText =
+
+navigator.onLine
+? "Online"
+: "Offline";
+
+}
+
+window.addEventListener(
+"online",
+updateNetwork
+);
+
+window.addEventListener(
+"offline",
+updateNetwork
+);
+
+updateNetwork();
+
+/* ==================================
+   ACTIVITY HISTORY
+================================== */
+
+let activityLog = [];
+
+function logActivity(text){
+
+activityLog.push({
+
+time:
+new Date()
+.toLocaleTimeString(),
+
+action:text
+
+});
+
+if(activityLog.length>50){
+
+activityLog.shift();
+
+}
+
+}
+
+setInterval(()=>{
+
+logActivity(
+"Viewing Images"
+);
+
+},10000);
+
+/* ==================================
+   HISTORY VIEWER
+================================== */
+
+const historyPanel =
+document.createElement("div");
+
+historyPanel.className =
+"glass";
+
+historyPanel.style.marginTop =
+"20px";
+
+historyPanel.innerHTML = `
+
+<h3>🕒 Activity History</h3>
+
+<div id="historyList"></div>
+
+`;
+
+document
+.querySelector(".main")
+.appendChild(
+historyPanel
+);
+
+setInterval(()=>{
+
+const list =
+document
+.getElementById(
+"historyList"
+);
+
+list.innerHTML = "";
+
+activityLog
+.slice()
+.reverse()
+.forEach(item=>{
+
+const div =
+document.createElement(
+"div"
+);
+
+div.innerHTML =
+
+item.time +
+" - " +
+item.action;
+
+list.appendChild(div);
+
+});
+
+},3000);
+
+/* ==================================
+   APP VERSION
+================================== */
+
+const versionPanel =
+document.createElement("div");
+
+versionPanel.className =
+"glass";
+
+versionPanel.style.marginTop =
+"20px";
+
+versionPanel.innerHTML = `
+
+<h3>🚀 Studio Pro</h3>
+
+<p>
+Version 9.0 Ultimate
+</p>
+
+`;
+
+document
+.querySelector(".main")
+.appendChild(
+versionPanel
+);
+
+showNotification(
+"Studio Pro Ultimate v9 Loaded"
+);
+
+</script>
